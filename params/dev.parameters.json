@@ -1,0 +1,116 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "canadacentral"
+    },
+    "kvName": {
+      "value": "kv-az104-dev-cc-kv01"
+    },
+    "kvPasswordSecretName": {
+      "value": "windowvmadminpassword"
+    },
+    "vnet": {
+      "value": {
+        "vnetName": "vnet-dev-cc",
+        "addressPrefix": ["10.0.0.0/16"],
+        "subnets": [
+          {
+            "name": "subnet-dev-cc-web-01",
+            "addressPrefix": "10.0.1.0/24"
+          },
+          {
+            "name": "subnet-dev-cc-db-01",
+            "addressPrefix": "10.0.2.0/24"
+          }
+        ]
+      }
+    },
+    "storageAccountName": {
+      "value": "sadevcc01"
+    },
+    "nsg": {
+      "value": {
+        "nsgName": "nsg-az104-shared-dev-cc",
+        "securityRules": [
+          {
+            "name": "AllowRDPAdmin",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "AllowHTTP",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "10.0.1.0/24",
+              "access": "Allow",
+              "priority": 410,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "AllowSSH",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 420,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "blockALlInbound",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 500,
+              "direction": "Inbound"
+            }
+          }
+        ],
+        "subnetstoAssociate": [
+          {
+            "virtualNetworkName": "vnet-dev-cc",
+            "addressPrefix": "10.0.1.0/24",
+            "subnetName": "subnet-dev-cc-web-01"
+          },
+          {
+            "virtualNetworkName": "vnet-dev-cc",
+            "addressPrefix": "10.0.2.0/24",
+            "subnetName": "subnet-dev-cc-db-01"
+          }
+        ]
+      }
+    },
+    "windowsVm": {
+      "value": {
+        "baseVmName": "vm-dev-cc-web",
+        "adminUsername": "jay",
+        "vmSize": "Standard_D2s_v3",
+        "nicName": "nic-dev-cc-web",
+        "virtualNetworkName": "vnet-dev-cc",
+        "subnetName": "subnet-dev-cc-web-01",
+        "vmCount": 2
+      }
+    }
+  }
+}
